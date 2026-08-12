@@ -34,13 +34,11 @@
         }
         .mono-text { font-family: 'JetBrains Mono', monospace; }
         
-        /* Custom range slider styling */
         input[type=range] { -webkit-appearance: none; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: #818cf8; cursor: pointer; margin-top: -4px; transition: transform 0.1s; }
         input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
         
-        /* Splash Screen Animations */
         @keyframes subtle-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-float { animation: subtle-float 3s ease-in-out infinite; }
@@ -67,7 +65,7 @@
                 <svg class="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
             </div>
             <h1 class="text-3xl font-semibold text-white tracking-tight text-center">Load an Audio File</h1>
-            <p class="text-slate-400 mt-3 text-sm sm:text-base max-w-md text-center">Drop a high-resolution FLAC, WAV, or MP3 to visualize its exact acoustic spectrum and metadata.</p>
+            <p class="text-slate-400 mt-3 text-sm sm:text-base max-w-md text-center">Drop a high-resolution audio file to visualize its exact acoustic spectrum and metadata.</p>
         </div>
 
         <div id="drop-zone" class="w-full border-2 border-dashed border-slate-600 rounded-2xl bg-slate-800/30 hover:bg-slate-800/60 hover:border-indigo-500/50 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center py-16 relative overflow-hidden group shadow-xl px-4 text-center">
@@ -75,7 +73,8 @@
             <div class="transform group-hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center justify-center w-full text-center">
                 <svg class="w-12 h-12 text-slate-400 mb-4 group-hover:text-indigo-400 transition-colors duration-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                 <p class="text-slate-200 font-medium text-lg w-full text-center m-0 p-0 block">Tap or drag your music here</p>
-                <p class="text-slate-500 text-sm mt-2 font-mono w-full text-center m-0 p-0 block">Supports local files only (No server uploads)</p>
+                <p class="text-slate-400 text-sm mt-3 font-medium w-full text-center m-0 p-0 block">Formats: FLAC, WAV, ALAC, M4A, MP3, OGG</p>
+                <p class="text-slate-500 text-xs mt-1.5 font-mono w-full text-center m-0 p-0 block opacity-75">Supports local files only (No server uploads)</p>
             </div>
         </div>
 
@@ -110,23 +109,17 @@
         <!-- Spectrogram Section -->
         <div class="border border-slate-700 bg-slate-900 rounded-2xl overflow-hidden shadow-2xl relative w-full flex flex-col mb-6">
             
-            <!-- BEAUTIFUL NEW HEADER WITH TIDAL/QOBUZ STYLE BADGES -->
             <div class="px-4 py-3 border-b border-slate-700 bg-slate-800/80 flex justify-between items-center backdrop-blur-sm min-h-[64px]">
-                <!-- Left: File Name -->
                 <div class="flex flex-col max-w-[50%] sm:max-w-[65%]">
                     <span id="file-name" class="font-semibold text-white truncate w-full text-sm sm:text-base">filename.mp3</span>
                     <span id="file-details" class="text-xs text-slate-400 truncate w-full">Loading details...</span>
                 </div>
                 
-                <!-- Right: Quick Technical Specs (Hidden initially) -->
                 <div id="quick-tech-section" class="flex flex-col items-end text-right hidden opacity-0 transition-opacity duration-500 shrink-0 pl-2">
                     <div class="flex items-center gap-1.5 mb-1">
-                        <!-- Quality Badge (HI-RES, CD QUALITY, etc.) -->
                         <span id="badge-quality" class="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-widest uppercase border bg-slate-700 text-slate-300 border-slate-600">LOADING</span>
-                        <!-- Format Badge (FLAC, MP3, etc.) -->
                         <span id="badge-format" class="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-600/50 text-[9px] font-bold text-slate-200 tracking-widest uppercase">EXT</span>
                     </div>
-                    <!-- Detailed Spec Line -->
                     <span id="tech-specs" class="text-[10px] text-slate-400 font-mono tracking-tight">-- kHz / -- bit</span>
                 </div>
             </div>
@@ -155,13 +148,14 @@
 
         <div class="flex flex-col lg:flex-row gap-6 w-full items-stretch">
             
-            <!-- Technical Info Section (Modernized with Tabs) -->
+            <!-- Tabbed Media Info Section -->
             <div class="border border-slate-700 bg-[#121316] rounded-2xl overflow-hidden shadow-2xl flex-grow flex flex-col w-full lg:w-1/2">
                 <div class="px-5 py-3 border-b border-slate-700/80 bg-slate-800/40 flex items-center justify-between">
                     <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2 uppercase tracking-wider">
                         <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         Media Info
                     </h2>
+                    <!-- Tabs -->
                     <div class="flex gap-1 bg-slate-900/80 p-1 rounded-lg border border-slate-700/50">
                         <button id="tab-btn-general" class="px-3 py-1 text-[10px] sm:text-xs font-semibold rounded bg-indigo-500/20 text-indigo-400 transition-colors">General</button>
                         <button id="tab-btn-audio" class="px-3 py-1 text-[10px] sm:text-xs font-semibold rounded text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-colors">Audio</button>
@@ -213,7 +207,6 @@
             }, 2500);
         });
 
-        // --- Custom Math Engine for FFT ---
         class FFT {
             constructor(size) {
                 this.size = size; this.sinTable = new Float32Array(size); this.cosTable = new Float32Array(size); this.reverseTable = new Uint32Array(size);
@@ -244,7 +237,6 @@
             }
         }
 
-        // --- Core Elements & Global State ---
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
         const landingPage = document.getElementById('landing-page');
@@ -267,7 +259,6 @@
             loadingText: document.getElementById('loading-text'),
             progressBar: document.getElementById('progress-bar'),
             
-            // New Tabbed Meta Info
             metaGeneral: document.getElementById('meta-general'),
             metaAudio: document.getElementById('meta-audio'),
             metaImage: document.getElementById('meta-image'),
@@ -275,7 +266,6 @@
             tabBtnAudio: document.getElementById('tab-btn-audio'),
             tabBtnImage: document.getElementById('tab-btn-image'),
             
-            // New Quick Tech Badges
             quickTechSection: document.getElementById('quick-tech-section'),
             badgeQuality: document.getElementById('badge-quality'),
             badgeFormat: document.getElementById('badge-format'),
@@ -327,61 +317,6 @@
             return `${m}:${s.toString().padStart(2, '0')}`;
         }
 
-        // --- Restored: Heuristic Engine for Quality Badges ---
-        function generateQuickTechSpecs(file, audioBuffer) {
-            const fileExt = file.name.split('.').pop().toUpperCase();
-            const isLossless = ['FLAC', 'WAV', 'ALAC', 'AIFF', 'DSD'].includes(fileExt);
-            
-            const sampleRatekHz = (audioBuffer.sampleRate / 1000).toFixed(1);
-            const duration = audioBuffer.duration;
-            const bitrateRaw = Math.round((file.size * 8 / duration) / 1000);
-            
-            // Web Audio API abstracts bit-depth. We elegantly estimate it based on acoustic density!
-            let bitDepth = 16; 
-            if (isLossless && (bitrateRaw > 1300 || audioBuffer.sampleRate > 48000)) bitDepth = 24;
-            if (isLossless && audioBuffer.sampleRate > 96000) bitDepth = 32;
-
-            let qualityText = "STANDARD";
-            let qualityClasses = "";
-
-            if (isLossless) {
-                if (audioBuffer.sampleRate > 48000 || bitDepth > 16) {
-                    qualityText = "HI-RES"; // Golden Tidal/Qobuz vibe
-                    qualityClasses = "bg-amber-500/10 text-amber-500 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.2)]"; 
-                } else {
-                    qualityText = "CD QUALITY"; // Clean, bright silver/blue vibe
-                    qualityClasses = "bg-indigo-500/10 text-indigo-400 border-indigo-500/40";
-                }
-            } else {
-                if (bitrateRaw >= 256) {
-                    qualityText = "HIGH";
-                    qualityClasses = "bg-blue-500/10 text-blue-400 border-blue-500/30";
-                } else {
-                    qualityText = "STANDARD";
-                    qualityClasses = "bg-slate-700/50 text-slate-400 border-slate-600/50";
-                }
-            }
-
-            // Populate the UI if the elements exist
-            if (uiElements.badgeFormat) uiElements.badgeFormat.textContent = fileExt;
-            if (uiElements.badgeQuality) {
-                uiElements.badgeQuality.textContent = qualityText;
-                uiElements.badgeQuality.className = `px-1.5 py-0.5 rounded text-[9px] font-bold tracking-widest uppercase border ${qualityClasses}`;
-            }
-            if (uiElements.techSpecs) {
-                if (isLossless) {
-                    uiElements.techSpecs.textContent = `${sampleRatekHz} kHz / ${bitDepth}-bit`;
-                } else {
-                    uiElements.techSpecs.textContent = `${sampleRatekHz} kHz • ${bitrateRaw} kbps`;
-                }
-            }
-            
-            if (uiElements.quickTechSection) {
-                uiElements.quickTechSection.classList.remove('hidden');
-                setTimeout(() => uiElements.quickTechSection.classList.remove('opacity-0'), 100);
-            }
-        }
-
         function setupAxes(duration, sampleRate) {
             uiElements.xAxis.innerHTML = '';
             const timeMarkers = 5;
@@ -401,128 +336,172 @@
             }
         }
 
-        async function updateMediaInfoTabs(file, audioBuffer, tags, artUrl) {
-            const pad = (str) => str.padEnd(30, ' ');
-            const sizeMiB = (file.size / 1048576).toFixed(1) + ' MiB';
-            const durationStr = formatTime(audioBuffer.duration).replace(':', ' min ') + ' s';
-            const bitrateRaw = Math.round((file.size * 8 / audioBuffer.duration) / 1000);
-            const bitrateStr = bitrateRaw.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + ' kb/s';
-            
-            let ext = file.name.split('.').pop().toUpperCase();
-            let formatInfo = ext;
-            let compressionMode = 'Lossy';
-            if (ext === 'FLAC') { formatInfo = 'Free Lossless Audio Codec'; compressionMode = 'Lossless'; }
-            else if (ext === 'WAV') { formatInfo = 'Waveform Audio'; compressionMode = 'Lossless'; }
-            else if (ext === 'MP3') { formatInfo = 'MPEG Audio Layer 3'; }
-            else if (ext === 'M4A' || ext === 'AAC') { formatInfo = 'Advanced Audio Coding'; }
-            else if (ext === 'OGG') { formatInfo = 'Ogg Vorbis'; }
-            
-            const isLossless = compressionMode === 'Lossless';
-            let bitDepth = 16; 
-            if (isLossless && (bitrateRaw > 1300 || audioBuffer.sampleRate > 48000)) bitDepth = 24;
-            if (isLossless && audioBuffer.sampleRate > 96000) bitDepth = 32;
-            
-            let channelLayout = audioBuffer.numberOfChannels === 2 ? 'L R' : (audioBuffer.numberOfChannels === 1 ? 'C' : `${audioBuffer.numberOfChannels} channels`);
+        function switchTab(tabId) {
+            ['general', 'audio', 'image'].forEach(id => {
+                document.getElementById(`tab-btn-${id}`).className = 'px-3 py-1 text-[10px] sm:text-xs font-semibold rounded text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-colors';
+                document.getElementById(`meta-${id}`).classList.add('hidden');
+            });
+            document.getElementById(`tab-btn-${tabId}`).className = 'px-3 py-1 text-[10px] sm:text-xs font-semibold rounded bg-indigo-500/20 text-indigo-400 transition-colors';
+            document.getElementById(`meta-${tabId}`).classList.remove('hidden');
+        }
 
-            // 1. General Tab
-            let generalTxt = `General\n`;
-            generalTxt += `${pad('Complete name')}: ${file.name}\n`;
-            generalTxt += `${pad('Format')}: ${ext}\n`;
-            generalTxt += `${pad('Format/Info')}: ${formatInfo}\n`;
-            generalTxt += `${pad('File size')}: ${sizeMiB}\n`;
-            generalTxt += `${pad('Duration')}: ${durationStr}\n`;
-            generalTxt += `${pad('Overall bit rate mode')}: ${isLossless ? 'Variable' : 'Constant'}\n`;
-            generalTxt += `${pad('Overall bit rate')}: ${bitrateStr}\n`;
-            
-            if (tags) {
-                if (tags.title) generalTxt += `${pad('Title')}: ${tags.title}\n`;
-                if (tags.album) generalTxt += `${pad('Album')}: ${tags.album}\n`;
-                if (tags.artist) generalTxt += `${pad('Performer')}: ${tags.artist}\n`;
-                if (tags.genre) generalTxt += `${pad('Genre')}: ${tags.genre}\n`;
-                if (tags.year) generalTxt += `${pad('Recorded date')}: ${tags.year}\n`;
-                if (tags.track) generalTxt += `${pad('Track name/Position')}: ${tags.track}\n`;
-            }
-            generalTxt += `${pad('Cover')}: ${artUrl ? 'Yes' : 'No'}\n`;
-            if (artUrl) {
-                generalTxt += `${pad('Cover type')}: Cover\n`;
-                const picFormat = tags.picture.format || 'image/jpeg';
-                generalTxt += `${pad('Cover MIME')}: ${picFormat}\n`;
-            }
+        if(uiElements.tabBtnGeneral) {
+            uiElements.tabBtnGeneral.addEventListener('click', () => switchTab('general'));
+            uiElements.tabBtnAudio.addEventListener('click', () => switchTab('audio'));
+            uiElements.tabBtnImage.addEventListener('click', () => switchTab('image'));
+        }
 
-            // 2. Audio Tab
-            let audioTxt = `Audio\n`;
-            audioTxt += `${pad('Format')}: ${ext}\n`;
-            audioTxt += `${pad('Format/Info')}: ${formatInfo}\n`;
-            audioTxt += `${pad('Duration')}: ${durationStr}\n`;
-            audioTxt += `${pad('Bit rate mode')}: ${isLossless ? 'Variable' : 'Constant'}\n`;
-            audioTxt += `${pad('Bit rate')}: ${bitrateStr}\n`;
-            audioTxt += `${pad('Channel(s)')}: ${audioBuffer.numberOfChannels} channels\n`;
-            audioTxt += `${pad('Channel layout')}: ${channelLayout}\n`;
-            audioTxt += `${pad('Sampling rate')}: ${(audioBuffer.sampleRate / 1000).toFixed(1)} kHz\n`;
-            audioTxt += `${pad('Bit depth')}: ${bitDepth} bits\n`;
-            audioTxt += `${pad('Compression mode')}: ${compressionMode}\n`;
-            audioTxt += `${pad('Stream size')}: ${(file.size * 0.99 / 1048576).toFixed(1)} MiB (99%)\n`;
+        // Reads raw file headers to bypass OS Mixer limits completely
+        function getTrueAudioMetadata(arrayBuffer) {
+            const view = new DataView(arrayBuffer);
+            const meta = { sampleRate: null, bitDepth: null, isLossless: false };
 
-            // 3. Image Tab
-            let imageTxt = `Image\n`;
-            if (artUrl && tags && tags.picture) {
-                const picFormat = tags.picture.format || 'image/jpeg';
-                const picType = picFormat.split('/')[1].toUpperCase();
-                
-                // Read image dimensions silently in background
-                const dimensions = await new Promise((resolve) => {
-                    const img = new Image();
-                    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
-                    img.onerror = () => resolve({ w: 0, h: 0 });
-                    img.src = artUrl;
-                });
-
-                imageTxt += `${pad('Type')}: Cover\n`;
-                imageTxt += `${pad('Format')}: ${picType}\n`;
-                imageTxt += `${pad('Muxing mode')}: ${ext} Picture\n`;
-                if (dimensions.w > 0) {
-                    imageTxt += `${pad('Width')}: ${dimensions.w} pixels\n`;
-                    imageTxt += `${pad('Height')}: ${dimensions.h} pixels\n`;
+            try {
+                // 1. Check FLAC
+                if (view.getUint32(0, false) === 0x664C6143) {
+                    meta.isLossless = true;
+                    meta.sampleRate = (view.getUint8(18) << 12) | (view.getUint8(19) << 4) | (view.getUint8(20) >> 4);
+                    meta.bitDepth = (((view.getUint8(20) & 0x01) << 4) | (view.getUint8(21) >> 4)) + 1;
+                    return meta;
                 }
-                imageTxt += `${pad('Color space')}: YUV\n`;
-                imageTxt += `${pad('Bit depth')}: 8 bits\n`;
-                imageTxt += `${pad('Compression mode')}: Lossy\n`;
+                
+                // 2. Check WAV
+                if (view.getUint32(0, false) === 0x52494646 && view.getUint32(8, false) === 0x57415645) {
+                    meta.isLossless = true;
+                    let offset = 12;
+                    while (offset < view.byteLength && offset < 1024) {
+                        if (view.getUint32(offset, false) === 0x666D7420) {
+                            meta.sampleRate = view.getUint32(offset + 12, true);
+                            meta.bitDepth = view.getUint16(offset + 22, true);
+                            break;
+                        }
+                        offset += 8 + view.getUint32(offset + 4, true);
+                    }
+                    return meta;
+                }
+
+                // 3. Scan Lossy Formats
+                const scanLimit = Math.min(view.byteLength, 131072);
+                for (let i = 0; i < scanLimit - 8; i++) {
+                    if (view.getUint32(i, false) === 0x6D646864) {
+                        const version = view.getUint8(i + 4);
+                        meta.sampleRate = version === 0 ? view.getUint32(i + 12, false) : view.getUint32(i + 20, false);
+                        return meta;
+                    }
+                    if (view.getUint32(i, false) === 0x4F707573 && view.getUint32(i + 4, false) === 0x48656164) {
+                        meta.sampleRate = 48000; return meta;
+                    }
+                    if (view.getUint8(i) === 0x01 && view.getUint32(i+1, false) === 0x766F7262 && view.getUint16(i+5, false) === 0x6973) {
+                        meta.sampleRate = view.getUint32(i + 12, true); return meta;
+                    }
+                }
+
+                // MP3 Fallback Scan
+                let mp3Offset = 0;
+                if (view.getUint8(0) === 0x49 && view.getUint8(1) === 0x44 && view.getUint8(2) === 0x33) {
+                    mp3Offset = 10 + ((view.getUint8(6) << 21) | (view.getUint8(7) << 14) | (view.getUint8(8) << 7) | view.getUint8(9));
+                }
+                if (mp3Offset < scanLimit - 2) {
+                    for (let i = mp3Offset; i < scanLimit - 2; i++) {
+                        if (view.getUint8(i) === 0xFF && (view.getUint8(i+1) & 0xE0) === 0xE0) {
+                            const layer = (view.getUint8(i+1) & 0x06) >> 1;
+                            const version = (view.getUint8(i+1) & 0x18) >> 3;
+                            const srIndex = (view.getUint8(i+2) & 0x0C) >> 2;
+                            if (layer !== 0 && version !== 1 && srIndex !== 3) {
+                                const rates = { 3: [44100, 48000, 32000], 2: [22050, 24000, 16000], 0: [11025, 12000, 8000] };
+                                if (rates[version] && rates[version][srIndex]) {
+                                    meta.sampleRate = rates[version][srIndex];
+                                    return meta;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not parse binary header.", e);
+            }
+            return meta;
+        }
+
+        function generateQuickTechSpecs(file, audioBuffer, trueMeta) {
+            const fileExt = file.name.split('.').pop().toUpperCase();
+            const isLossless = trueMeta.isLossless || ['FLAC', 'WAV', 'ALAC', 'AIFF'].includes(fileExt);
+            const sampleRatekHz = (audioBuffer.sampleRate / 1000).toFixed(1);
+            const duration = audioBuffer.duration;
+            const bitrateRaw = duration > 0 ? Math.round((file.size * 8 / duration) / 1000) : 0;
+            
+            let bitDepth = trueMeta.bitDepth || 16; 
+            if (isLossless && !trueMeta.bitDepth) {
+                 if (bitrateRaw > 1300 || audioBuffer.sampleRate > 48000) bitDepth = 24;
+                 if (audioBuffer.sampleRate > 96000) bitDepth = 32;
+            }
+
+            let qualityText = "STANDARD"; let qualityClasses = "";
+            if (isLossless) {
+                if (audioBuffer.sampleRate > 48000 || bitDepth > 16) {
+                    qualityText = "HI-RES"; qualityClasses = "bg-amber-500/10 text-amber-500 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.2)]"; 
+                } else {
+                    qualityText = "CD QUALITY"; qualityClasses = "bg-indigo-500/10 text-indigo-400 border-indigo-500/40";
+                }
             } else {
-                imageTxt += `No cover image embedded in file.\n`;
+                if (bitrateRaw >= 256) {
+                    qualityText = "HIGH"; qualityClasses = "bg-blue-500/10 text-blue-400 border-blue-500/30";
+                } else {
+                    qualityText = "STANDARD"; qualityClasses = "bg-slate-700/50 text-slate-400 border-slate-600/50";
+                }
             }
 
-            uiElements.metaGeneral.textContent = generalTxt;
-            uiElements.metaAudio.textContent = audioTxt;
-            uiElements.metaImage.textContent = imageTxt;
+            uiElements.badgeFormat.textContent = fileExt;
+            uiElements.badgeQuality.textContent = qualityText;
+            uiElements.badgeQuality.className = `px-1.5 py-0.5 rounded text-[9px] font-bold tracking-widest uppercase border ${qualityClasses}`;
+            
+            if (isLossless) uiElements.techSpecs.textContent = `${sampleRatekHz} kHz / ${bitDepth}-bit • ${bitrateRaw} kbps`;
+            else uiElements.techSpecs.textContent = `${sampleRatekHz} kHz • ${bitrateRaw} kbps`;
+
+            uiElements.quickTechSection.classList.remove('hidden');
+            setTimeout(() => uiElements.quickTechSection.classList.remove('opacity-0'), 100);
         }
 
-        // Tab Switching Logic
-        function switchTab(activeTab) {
-            [uiElements.tabBtnGeneral, uiElements.tabBtnAudio, uiElements.tabBtnImage].forEach(btn => {
-                btn.className = "px-3 py-1 text-[10px] sm:text-xs font-semibold rounded text-slate-400 hover:text-slate-200 hover:bg-slate-700/50 transition-colors";
-            });
-            [uiElements.metaGeneral, uiElements.metaAudio, uiElements.metaImage].forEach(content => {
-                content.classList.add('hidden');
-            });
+        function updateMediaInfoTabs(file, duration, trueMeta, tags, artUrl) {
+            const pad = (str) => str.padEnd(25, ' ');
+            const sizeMiB = (file.size / 1048576).toFixed(1) + ' MiB';
+            const durationStr = formatTime(duration).replace(':', ' min ') + ' s';
+            const bitrateRaw = duration > 0 ? Math.round((file.size * 8 / duration) / 1000) : 0;
+            const bitrateStr = bitrateRaw.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + ' kb/s';
+            let ext = file.name.split('.').pop().toUpperCase();
+            if (ext === 'MP3') ext = 'MPEG Audio';
 
-            if (activeTab === 'general') {
-                uiElements.tabBtnGeneral.className = "px-3 py-1 text-[10px] sm:text-xs font-semibold rounded bg-indigo-500/20 text-indigo-400 transition-colors";
-                uiElements.metaGeneral.classList.remove('hidden');
-            } else if (activeTab === 'audio') {
-                uiElements.tabBtnAudio.className = "px-3 py-1 text-[10px] sm:text-xs font-semibold rounded bg-indigo-500/20 text-indigo-400 transition-colors";
-                uiElements.metaAudio.classList.remove('hidden');
-            } else if (activeTab === 'image') {
-                uiElements.tabBtnImage.className = "px-3 py-1 text-[10px] sm:text-xs font-semibold rounded bg-indigo-500/20 text-indigo-400 transition-colors";
-                uiElements.metaImage.classList.remove('hidden');
+            // General Tab
+            let genTxt = `${pad('Complete name')}: ${file.name}\n${pad('Format')}: ${ext}\n${pad('File size')}: ${sizeMiB}\n${pad('Duration')}: ${durationStr}\n${pad('Overall bit rate')}: ${bitrateStr}\n`;
+            if (tags) {
+                if (tags.title) genTxt += `${pad('Title')}: ${tags.title}\n`;
+                if (tags.album) genTxt += `${pad('Album')}: ${tags.album}\n`;
+                if (tags.artist) genTxt += `${pad('Performer')}: ${tags.artist}\n`;
+                if (tags.genre) genTxt += `${pad('Genre')}: ${tags.genre}\n`;
+                if (tags.year) genTxt += `${pad('Recorded date')}: ${tags.year}\n`;
+            }
+            uiElements.metaGeneral.textContent = genTxt;
+
+            // Audio Tab
+            let audTxt = `${pad('Format')}: ${ext}\n${pad('Duration')}: ${durationStr}\n${pad('Bit rate')}: ${bitrateStr}\n${pad('Channel(s)')}: 2 channels\n${pad('Sampling rate')}: ${(globalAudioCtx.sampleRate / 1000).toFixed(1)} kHz\n`;
+            if (trueMeta.bitDepth) audTxt += `${pad('Bit depth')}: ${trueMeta.bitDepth} bits\n`;
+            audTxt += `${pad('Compression mode')}: ${trueMeta.isLossless ? 'Lossless' : 'Lossy'}\n`;
+            uiElements.metaAudio.textContent = audTxt;
+
+            // Image Tab
+            if (tags && tags.picture && artUrl) {
+                const img = new Image();
+                img.onload = function() {
+                    let imgTxt = `${pad('Type')}: Cover\n${pad('Format')}: ${tags.picture.format.toUpperCase().replace('IMAGE/', '')}\n${pad('Width')}: ${this.width} pixels\n${pad('Height')}: ${this.height} pixels\n`;
+                    uiElements.metaImage.textContent = imgTxt;
+                }
+                img.src = artUrl;
+            } else {
+                uiElements.metaImage.textContent = "No embedded cover art found.";
             }
         }
 
-        uiElements.tabBtnGeneral.addEventListener('click', () => switchTab('general'));
-        uiElements.tabBtnAudio.addEventListener('click', () => switchTab('audio'));
-        uiElements.tabBtnImage.addEventListener('click', () => switchTab('image'));
-
-        // --- Player Controls ---
-        function togglePlayPause() {
+        uiElements.playPauseBtn.addEventListener('click', () => {
             if (!uiElements.audioPlayer.src) return;
             if (uiElements.audioPlayer.paused) {
                 uiElements.audioPlayer.play();
@@ -533,9 +512,7 @@
                 uiElements.iconPlay.classList.remove('hidden');
                 uiElements.iconPause.classList.add('hidden');
             }
-        }
-
-        uiElements.playPauseBtn.addEventListener('click', togglePlayPause);
+        });
         
         uiElements.audioPlayer.addEventListener('timeupdate', () => {
             const current = uiElements.audioPlayer.currentTime;
@@ -568,7 +545,6 @@
             
             fileInput.value = '';
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             uiElements.metaGeneral.textContent = '';
             uiElements.metaAudio.textContent = '';
             uiElements.metaImage.textContent = '';
@@ -583,8 +559,8 @@
             uiElements.playerProgress.value = 0;
             uiElements.timeCurrent.textContent = "0:00";
             uiElements.timeTotal.textContent = "0:00";
+            uiElements.playPauseBtn.disabled = false;
             
-            // Hide custom badges on reset
             uiElements.quickTechSection.classList.add('opacity-0');
             setTimeout(() => uiElements.quickTechSection.classList.add('hidden'), 500);
         }
@@ -609,6 +585,8 @@
             
             uiElements.fileName.textContent = file.name;
             uiElements.fileDetails.textContent = `Size: ${(file.size / 1048576).toFixed(2)} MB`;
+            uiElements.metaGeneral.textContent = "Extracting deep metadata...\n";
+            switchTab('general');
             
             uiElements.loadingOverlay.classList.remove('hidden', 'opacity-0');
             uiElements.loadingText.textContent = "Reading file into memory...";
@@ -622,17 +600,26 @@
                     reader.readAsArrayBuffer(file);
                 });
                 
+                // Get absolute true stats before OS mixer ruins them
+                const trueMeta = getTrueAudioMetadata(arrayBuffer);
+                
                 currentObjectUrl = URL.createObjectURL(file);
                 uiElements.audioPlayer.src = currentObjectUrl;
 
-                try {
-                    if (!globalAudioCtx) {
-                        globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    }
-                    if (globalAudioCtx.state === 'suspended') await globalAudioCtx.resume();
-                } catch (audioCtxError) {
-                    throw new Error("Your browser environment completely blocks Audio Processing.");
+                if (globalAudioCtx) {
+                    try { await globalAudioCtx.close(); } catch(e){} 
                 }
+                
+                try {
+                    // Force the Audio Engine to the file's native rate to stop upsampling/downsampling!
+                    const ctxOptions = trueMeta.sampleRate ? { sampleRate: trueMeta.sampleRate } : { sampleRate: 44100 };
+                    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)(ctxOptions);
+                } catch (audioCtxError) {
+                    // Failsafe for restrictive browsers
+                    globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+                }
+                
+                if (globalAudioCtx.state === 'suspended') await globalAudioCtx.resume();
                 
                 uiElements.loadingText.textContent = "Decoding audio engine...";
                 
@@ -645,21 +632,19 @@
                 
                 uiElements.loadingText.textContent = "Painting acoustic spectrum...";
                 
-                // --- Triggers the new UI Badge Logic! ---
-                generateQuickTechSpecs(file, audioBuffer);
+                generateQuickTechSpecs(file, audioBuffer, trueMeta);
                 
+                uiElements.fileDetails.textContent = `${(globalAudioCtx.sampleRate / 1000).toFixed(1)} kHz • ${audioBuffer.numberOfChannels} ch • ${formatTime(audioBuffer.duration)}`;
                 uiElements.timeTotal.textContent = formatTime(audioBuffer.duration);
                 
-                setupAxes(audioBuffer.duration, audioBuffer.sampleRate);
+                setupAxes(audioBuffer.duration, globalAudioCtx.sampleRate);
                 processAndDrawSpectrogram(audioBuffer);
 
-                uiElements.metaGeneral.textContent = "Extracting deep metadata...\n";
-
+                // Read metadata safely and build UI
                 if (window.jsmediatags) {
                     window.jsmediatags.read(file, {
-                        onSuccess: async function(tag) {
+                        onSuccess: function(tag) {
                             const tags = tag.tags;
-                            
                             uiElements.playerTitle.textContent = tags.title || file.name.split('.')[0];
                             uiElements.playerArtist.textContent = tags.artist || "Unknown Artist";
 
@@ -670,19 +655,20 @@
                                 uiElements.albumArt.src = currentArtUrl;
                                 uiElements.albumArt.classList.remove('hidden');
                                 uiElements.defaultArt.classList.add('hidden');
+                            } else {
+                                uiElements.albumArt.classList.add('hidden');
+                                uiElements.defaultArt.classList.remove('hidden');
                             }
-                            
-                            // Await the new async tab function
-                            await updateMediaInfoTabs(file, audioBuffer, tags, currentArtUrl);
+                            updateMediaInfoTabs(file, audioBuffer.duration, trueMeta, tags, currentArtUrl);
                         },
-                        onError: async function() {
+                        onError: function() {
                             uiElements.playerTitle.textContent = file.name.split('.')[0];
-                            await updateMediaInfoTabs(file, audioBuffer, null, null);
+                            updateMediaInfoTabs(file, audioBuffer.duration, trueMeta, null, null);
                         }
                     });
                 } else {
                     uiElements.playerTitle.textContent = file.name.split('.')[0];
-                    await updateMediaInfoTabs(file, audioBuffer, null, null);
+                    updateMediaInfoTabs(file, audioBuffer.duration, trueMeta, null, null);
                 }
 
             } catch (err) {
@@ -693,7 +679,6 @@
             }
         }
 
-        // --- Fast Fourier Transform Renderer ---
         function processAndDrawSpectrogram(audioBuffer) {
             const FFT_SIZE = 4096;
             const NUM_BINS = FFT_SIZE / 2;
