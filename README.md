@@ -1,3 +1,8 @@
+<img width="941" height="996" alt="image" src="https://github.com/user-attachments/assets/d8ba79cc-37b9-437f-89ba-c1e67e7ef58b" />
+
+
+
+
 🎵 SpectroScope
 
 SpectroScope is a high-fidelity, completely offline acoustic spectrum analyzer built directly for the modern web and mobile devices.
