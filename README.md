@@ -3,7 +3,7 @@
 
 
 
-🎵 SpectroScope (buggy)
+🎵 SpectroScope (buggy but it works)
 
 SpectroScope is a high-fidelity, completely offline acoustic spectrum analyzer built directly for the modern web and mobile devices.
 Inspired by the classic desktop tool Spek, SpectroScope allows audiophiles, sound engineers, and music collectors to instantly visualize the frequency spectrum of their audio files to verify true lossless quality (e.g., distinguishing a true FLAC from a transcoded MP3).
