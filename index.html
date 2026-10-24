@@ -34,10 +34,72 @@
         }
         .mono-text { font-family: 'JetBrains Mono', monospace; }
         
-        input[type=range] { -webkit-appearance: none; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: #818cf8; cursor: pointer; margin-top: -4px; transition: transform 0.1s; }
-        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.3); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px; }
+        /* Custom, touch-friendly playback seek bar */
+        #player-progress {
+            --seek-progress: 0%;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            display: block;
+            width: 100%;
+            min-width: 0;
+            height: 28px;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            outline: none;
+            cursor: pointer;
+            background: transparent !important;
+            touch-action: pan-y;
+            accent-color: #a78bfa;
+        }
+        #player-progress::-webkit-slider-runnable-track {
+            height: 6px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #6366f1 0%, #a855f7 var(--seek-progress), #30313d var(--seek-progress), #30313d 100%);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,.35), 0 0 10px rgba(139,92,246,.10);
+        }
+        #player-progress::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            margin-top: -4.5px;
+            border: 2px solid #f5f3ff;
+            border-radius: 50%;
+            background: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(167,139,250,.16), 0 0 14px rgba(168,85,247,.65);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        #player-progress:active::-webkit-slider-thumb {
+            transform: scale(1.18);
+            box-shadow: 0 0 0 5px rgba(167,139,250,.2), 0 0 18px rgba(168,85,247,.8);
+        }
+        #player-progress::-moz-range-track {
+            height: 6px;
+            border: 0;
+            border-radius: 999px;
+            background: #30313d;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,.35);
+        }
+        #player-progress::-moz-range-progress {
+            height: 6px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+        }
+        #player-progress::-moz-range-thumb {
+            width: 11px;
+            height: 11px;
+            border: 2px solid #f5f3ff;
+            border-radius: 50%;
+            background: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(167,139,250,.16), 0 0 14px rgba(168,85,247,.65);
+        }
+        #player-progress:focus-visible { filter: drop-shadow(0 0 4px rgba(167,139,250,.65)); }
+        @media (prefers-reduced-motion: no-preference) {
+            #player-progress::-webkit-slider-thumb { animation: seek-pulse 2.4s ease-in-out infinite; }
+            @keyframes seek-pulse { 0%, 100% { box-shadow: 0 0 0 3px rgba(167,139,250,.13), 0 0 10px rgba(168,85,247,.42); } 50% { box-shadow: 0 0 0 4px rgba(167,139,250,.2), 0 0 16px rgba(168,85,247,.7); } }
+        }
         
         @keyframes subtle-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -950,19 +1012,28 @@
             const current = uiElements.audioPlayer.currentTime;
             const duration = uiElements.audioPlayer.duration;
             uiElements.timeCurrent.textContent = formatTime(current);
-            if (duration) uiElements.playerProgress.value = (current / duration) * 100;
+            if (duration) {
+                uiElements.playerProgress.value = (current / duration) * 100;
+                uiElements.playerProgress.style.setProperty('--seek-progress', `${(current / duration) * 100}%`);
+            }
         });
 
         uiElements.audioPlayer.addEventListener('ended', () => {
             uiElements.iconPlay.classList.remove('hidden');
             uiElements.iconPause.classList.add('hidden');
             uiElements.playerProgress.value = 0;
+            uiElements.playerProgress.style.setProperty('--seek-progress', '0%');
             uiElements.timeCurrent.textContent = "0:00";
         });
 
         uiElements.playerProgress.addEventListener('input', (e) => {
+            const percent = Math.max(0, Math.min(100, Number(e.target.value) || 0));
+            uiElements.playerProgress.style.setProperty('--seek-progress', `${percent}%`);
             const duration = uiElements.audioPlayer.duration;
-            if (duration) uiElements.audioPlayer.currentTime = (e.target.value / 100) * duration;
+            if (Number.isFinite(duration) && duration > 0) {
+                uiElements.audioPlayer.currentTime = (percent / 100) * duration;
+                uiElements.timeCurrent.textContent = formatTime(uiElements.audioPlayer.currentTime);
+            }
         });
 
         function goToLanding() {
@@ -996,6 +1067,7 @@
             uiElements.playerTitle.textContent = 'Awaiting Audio';
             uiElements.playerArtist.textContent = '...';
             uiElements.playerProgress.value = 0;
+            uiElements.playerProgress.style.setProperty('--seek-progress', '0%');
             uiElements.timeCurrent.textContent = '0:00';
             uiElements.timeTotal.textContent = '0:00';
             uiElements.playPauseBtn.disabled = true;
