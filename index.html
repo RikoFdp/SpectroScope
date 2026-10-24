@@ -725,6 +725,86 @@
             return found;
         }
 
+        // Ogg stores Opus/Vorbis comments inside packets; a packet may span multiple Ogg pages.
+        // Reading raw bytes alone misses comments when page lacing splits them.
+        function parseOggComments(bytes) {
+            const packets = [];
+            let packetParts = [];
+            let cursor = 0;
+            while (cursor + 27 <= bytes.length) {
+                if (bytes[cursor] !== 0x4F || bytes[cursor + 1] !== 0x67 || bytes[cursor + 2] !== 0x67 || bytes[cursor + 3] !== 0x53) {
+                    cursor++;
+                    continue;
+                }
+                const segments = bytes[cursor + 26];
+                if (cursor + 27 + segments > bytes.length) break;
+                const lacingStart = cursor + 27;
+                let dataCursor = lacingStart + segments;
+                let validPage = true;
+                for (let i = 0; i < segments; i++) {
+                    const length = bytes[lacingStart + i];
+                    if (dataCursor + length > bytes.length) { validPage = false; break; }
+                    packetParts.push(bytes.subarray(dataCursor, dataCursor + length));
+                    dataCursor += length;
+                    if (length < 255) {
+                        let total = 0;
+                        for (const part of packetParts) total += part.length;
+                        const packet = new Uint8Array(total);
+                        let out = 0;
+                        for (const part of packetParts) { packet.set(part, out); out += part.length; }
+                        packets.push(packet);
+                        packetParts = [];
+                    }
+                }
+                if (!validPage) break;
+                cursor = dataCursor;
+            }
+            const readLE32 = (arr, at) => at + 4 <= arr.length ? (arr[at] | (arr[at+1] << 8) | (arr[at+2] << 16) | (arr[at+3] << 24)) >>> 0 : null;
+            const decoder = new TextDecoder('utf-8', { fatal: false });
+            for (const packet of packets) {
+                let offset = 0;
+                if (packet.length >= 8 && decoder.decode(packet.subarray(0, 8)) === 'OpusTags') offset = 8;
+                else if (packet.length >= 7 && packet[0] === 3 && decoder.decode(packet.subarray(1, 7)) === 'vorbis') offset = 7;
+                else continue;
+                const vendorLength = readLE32(packet, offset);
+                if (vendorLength == null || vendorLength > packet.length - offset - 4) continue;
+                offset += 4 + vendorLength;
+                const count = readLE32(packet, offset);
+                if (count == null || count > 10000) continue;
+                offset += 4;
+                const tags = {};
+                for (let i = 0; i < count && offset + 4 <= packet.length; i++) {
+                    const length = readLE32(packet, offset); offset += 4;
+                    if (length == null || length > packet.length - offset) break;
+                    const value = decoder.decode(packet.subarray(offset, offset + length)); offset += length;
+                    const eq = value.indexOf('=');
+                    if (eq <= 0) continue;
+                    const key = value.slice(0, eq).trim().toUpperCase();
+                    const val = value.slice(eq + 1).trim();
+                    if (!val) continue;
+                    const map = { TITLE: 'title', ARTIST: 'artist', ALBUM: 'album', ALBUMARTIST: 'albumartist', ALBUM_ARTIST: 'albumartist', GENRE: 'genre', DATE: 'year', YEAR: 'year', TRACKNUMBER: 'track', COMPOSER: 'composer', COMMENT: 'comment' };
+                    if (key === 'METADATA_BLOCK_PICTURE') {
+                        try {
+                            const binary = atob(val);
+                            const block = new Uint8Array(binary.length);
+                            for (let j = 0; j < binary.length; j++) block[j] = binary.charCodeAt(j);
+                            tags.picture = parseFlacPictureBlock(block, 0, block.length) || tags.picture;
+                        } catch (_) { /* ignore malformed picture comment */ }
+                    } else if (map[key] && !tags[map[key]]) tags[map[key]] = val;
+                    else if (key === 'COVERART' && !tags.picture) {
+                        try {
+                            const binary = atob(val);
+                            const art = new Uint8Array(binary.length);
+                            for (let j = 0; j < binary.length; j++) art[j] = binary.charCodeAt(j);
+                            tags.picture = pictureFromBytes(art, '');
+                        } catch (_) { /* ignore malformed legacy cover */ }
+                    }
+                }
+                return tags;
+            }
+            return {};
+        }
+
         function parseOggPicture(bytes) {
             const needle = 'METADATA_BLOCK_PICTURE=';
             const target = Array.from(needle, ch => ch.charCodeAt(0));
@@ -1015,7 +1095,17 @@
 
                 const finishMetadata = (tags) => {
                     if (loadId !== currentLoadId) return;
-                    tags = tags || null;
+                    tags = tags || {};
+                    const ext = String(file.name).split('.').pop().toLowerCase();
+                    if (['opus', 'ogg', 'oga'].includes(ext)) {
+                        const oggTags = parseOggComments(new Uint8Array(arrayBuffer));
+                        // Prefer the container's actual comments when the generic tag reader omits Opus metadata.
+                        tags = { ...oggTags, ...tags };
+                        if (!normalizePicture(tags.picture) && oggTags.picture) tags.picture = oggTags.picture;
+                        for (const key of ['title', 'artist', 'album', 'albumartist', 'genre', 'year', 'track', 'composer', 'comment']) {
+                            if ((!tags[key] || !String(tags[key]).trim()) && oggTags[key]) tags[key] = oggTags[key];
+                        }
+                    }
                     const basename = file.name.replace(/\.[^.]+$/, '');
                     uiElements.playerTitle.textContent = (tags && tags.title) || basename || file.name;
                     uiElements.playerArtist.textContent = (tags && tags.artist) || 'Unknown Artist';
