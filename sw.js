@@ -1,24 +1,45 @@
-const CACHE_NAME = 'spectroscope-v1';
+const CACHE_NAME = 'spectroscope-v2';
 const ASSETS_TO_CACHE = [
   './index.html',
   './manifest.json',
   './icon.svg'
 ];
 
-// Install event: cache files so the app works totally offline
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(ASSETS_TO_CACHE))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Fetch event: serve from cache if offline
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(
+        keys.filter((key) => key.startsWith('spectroscope-') && key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      ))
+      .then(() => self.clients.claim())
+  );
+});
+
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.origin !== self.location.origin) return;
+
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) return cachedResponse;
+      return fetch(event.request).then((response) => {
+        if (response && response.ok && (event.request.destination === 'document' || /\.(?:html|json|svg)$/i.test(requestUrl.pathname))) {
+          const responseCopy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseCopy)).catch(() => {});
+        }
+        return response;
+      });
     })
   );
 });
