@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spectroscope-v2';
+const CACHE_NAME = 'spectroscope-v3';
 const ASSETS_TO_CACHE = [
   './index.html',
   './manifest.json',
